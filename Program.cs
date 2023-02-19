@@ -1,15 +1,36 @@
+using FireAndForgetHandler.Data;
+using FireAndForgetHandler.Handler;
+using FireAndForgetHandler.Model;
+using FireAndForgetHandler.Repository;
+using FireAndForgetHandler.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.AddConsole();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+                options.JsonSerializerOptions
+                .Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<ApplicationDbContext>
+    (options => options.UseInMemoryDatabase("ApplicationDb"));
+
+builder.Services.AddSingleton<IFireAndForgetTaskHandler, 
+    FireAndForgetTaskHandler>();
+
+builder.Services.AddScoped<IRepository<TaskStatusInfo>, 
+    Repository<TaskStatusInfo>>();
+
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddScoped<StatusService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
