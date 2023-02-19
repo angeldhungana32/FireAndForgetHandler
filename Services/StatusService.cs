@@ -18,11 +18,13 @@ namespace FireAndForgetHandler.Services
         {
             if(Guid.TryParse(id, out var statusId))
             {
-                TaskStatusInfo statusInfo = await _statusRepository.GetByIdAsync(statusId);
+                TaskStatusInfo statusInfo = await _statusRepository
+                    .GetByIdAsync(statusId);
+
                 return statusInfo.Response();
             }
 
-            return null;
+            return default;
         }
 
         public async Task<TaskStatusInfo> CreateTaskStatus()
