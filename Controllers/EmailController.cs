@@ -23,7 +23,7 @@ namespace FireAndForgetHandler.Controllers
 
         // api/v1/Email
         [HttpPost]
-        [ProducesResponseType(typeof(TaskStatusInfoResponse), 204)]
+        [ProducesResponseType(typeof(TaskStatusInfoResponse), 201)]
         public async Task<IActionResult> SendEmailAsync([FromBody] EmailRequest email)
         {
             TaskStatusInfo taskStatusInfo = await _statusService
@@ -33,7 +33,12 @@ namespace FireAndForgetHandler.Controllers
                 .ExecuteAsync<EmailService>(option => 
                     option.SendEmailAsync(email), taskStatusInfo);
 
-            return Accepted(taskStatusInfo.Response());
+            return Created(string.Format("{0}://{1}/api/v1/Status/{2}",
+                Request.Scheme,
+                Request.Host,
+                taskStatusInfo.Id), 
+                taskStatusInfo.Response());
+
         }
     }
 }

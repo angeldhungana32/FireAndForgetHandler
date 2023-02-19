@@ -17,7 +17,7 @@ namespace FireAndForgetHandler.Controllers
 
         // api/v1/status/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> StatusAsync(string id)
+        public async Task<IActionResult> GetStatusAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
